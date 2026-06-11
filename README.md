@@ -28,7 +28,7 @@ Passwords and 4-digit financial PINs are securely hashed using `bcryptjs`, so ev
 * **Frontend:** React.js (Vite), Tailwind CSS, Axios
 * **Backend:** Node.js, Express.js
 * **Database:** PostgreSQL, Sequelize ORM
-* **Security:** JWT (JSON Web Tokens) for sessions, bcryptjs, crypto
+* **Security:** JWT for sessions, bcryptjs, crypto
 
 ---
 
