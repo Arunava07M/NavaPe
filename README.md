@@ -3,7 +3,7 @@
   <h1>NavaPe</h1>
   <p><strong>A digital payment app built to test backend security and transactions.</strong></p>
   <p>
-    <a href="https://navape.vercel.app"><strong>🚀 View Live Demo</strong></a>
+    <a href="https://navape.vercel.app"><strong>https://navape.vercel.app</strong></a>
   </p>
 </div>
 
