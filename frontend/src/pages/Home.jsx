@@ -18,10 +18,11 @@ const Home = () => {
       `}} />
 
       <nav className="w-full max-w-6xl mx-auto px-6 py-5 flex justify-between items-center shrink-0 z-10 animate-fade-up">
-        <div className="flex items-center gap-2">
+        <Link to={localStorage.getItem('token') ? '/dashboard' : '/'} className="flex items-center gap-2 cursor-pointer">
           <img src="/navape-logo.svg" alt="logo" className="w-8 h-8" />
           <span className="text-xl font-semibold text-gray-900 tracking-tight">NavaPe</span>
-        </div>
+        </Link>
+        
         <div className="flex items-center gap-6">
           <Link to="/login" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
             Login
