@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./frontend/public/navape-logo.svg" alt="NavaPe Logo" width="80" />
   <h1>NavaPe</h1>
-  <p><strong>A digital payment app clone built to test backend security and transactions.</strong></p>
+  <p><strong>A digital payment app built to test backend security and transactions.</strong></p>
 </div>
 
 ## Overview
