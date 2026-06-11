@@ -68,6 +68,10 @@ cd frontend
 npm install
 npm run dev
 ```
+Create a .env file in the frontend folder: 
+```env
+VITE_API_URL=http://localhost:8000/api
+```
 
 Now, just open `http://localhost:5173` in your browser and the app should be running!
 
@@ -77,7 +81,7 @@ Now, just open `http://localhost:5173` in your browser and the app should be run
 
 I also set up a Swagger UI dashboard. It's basically a testing page for the backend where you can see all the routes and test the API without even opening the React frontend.
 
-Once your backend server is running, go to: **`http://localhost:8000/api-docs`**
+Once your backend server is running, go to: **`https://navape-backend.onrender.com/api-docs`**
 
 **How to test secure routes like money transfers:**
 
