@@ -75,7 +75,9 @@ Create a .env file in the frontend folder:
 ```env
 VITE_API_URL=http://localhost:8000/api
 ```
-
+```bash
+npm run dev
+```
 Now, just open `http://localhost:5173` in your browser and the app should be running!
 
 ---
