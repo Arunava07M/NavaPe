@@ -75,6 +75,8 @@ Create a .env file in the frontend folder:
 ```env
 VITE_API_URL=http://localhost:8000/api
 ```
+
+now do:
 ```bash
 npm run dev
 ```
