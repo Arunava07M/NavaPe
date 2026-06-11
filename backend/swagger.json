@@ -1,0 +1,247 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "NavaPe API",
+    "version": "1.0.0",
+    "description": "Complete API documentation for the NavaPe digital payment sandbox. Features double-entry accounting, row-level locking, and cryptographic signature verification."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Local Development Server"
+    }
+  ],
+  "tags": [
+    { "name": "Auth", "description": "Authentication and user registration" },
+    { "name": "Wallet", "description": "Money transfers, deposits, and payment verification" },
+    { "name": "Users", "description": "User profile and lookup operations" },
+    { "name": "Transactions", "description": "Transaction history" }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "summary": "Register New User",
+        "tags": ["Auth"],
+        "description": "Creates a new user account and securely hashes the password and 4-digit passcode.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "email", "phone", "password", "passcode"],
+                "properties": {
+                  "name": { "type": "string", "example": "John Doe" },
+                  "email": { "type": "string", "example": "john@example.com" },
+                  "phone": { "type": "string", "example": "9876543210" },
+                  "password": { "type": "string", "example": "securepass123" },
+                  "passcode": { "type": "string", "example": "1234" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "User registered successfully" },
+          "400": { "description": "Missing fields or user already exists" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "summary": "User Login",
+        "tags": ["Auth"],
+        "description": "Authenticates a user and returns a JWT token. Protected by strict rate-limiting (5 attempts per 15 min).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": { "type": "string", "example": "john@example.com" },
+                  "password": { "type": "string", "example": "securepass123" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful, returns JWT and user object" },
+          "400": { "description": "Invalid credentials" },
+          "500": { "description": "Server error" }
+        }
+      }
+    },
+    "/api/auth/profile": {
+      "get": {
+        "summary": "Get Current User Profile",
+        "tags": ["Auth"],
+        "description": "Fetches the authenticated user's profile (excludes password and passcode hashes).",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Profile retrieved successfully" },
+          "401": { "description": "Not authorized, no token" },
+          "404": { "description": "User not found" }
+        }
+      }
+    },
+    "/api/wallet/create-order": {
+      "post": {
+        "summary": "Create Deposit Order",
+        "tags": ["Wallet"],
+        "description": "Initializes a mock gateway payment order for wallet top-up.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["amount"],
+                "properties": {
+                  "amount": { "type": "number", "example": 1000 }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Order created, returns order_id" },
+          "400": { "description": "Invalid amount" }
+        }
+      }
+    },
+    "/api/wallet/mock-confirm": {
+      "post": {
+        "summary": "Mock Gateway Confirmation",
+        "tags": ["Wallet"],
+        "description": "Simulates a third-party gateway response by generating a payment ID and HMAC-SHA256 signature.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["order_id"],
+                "properties": {
+                  "order_id": { "type": "string", "example": "order_12345678" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Returns payment_id and generated signature" },
+          "400": { "description": "Order ID required" }
+        }
+      }
+    },
+    "/api/wallet/verify-payment": {
+      "post": {
+        "summary": "Verify and Complete Deposit",
+        "tags": ["Wallet"],
+        "description": "Verifies gateway signature and user passcode, then updates user balance using strict DB transactions.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["order_id", "payment_id", "signature", "passcode"],
+                "properties": {
+                  "order_id": { "type": "string", "example": "order_12345678" },
+                  "payment_id": { "type": "string", "example": "pay_87654321" },
+                  "signature": { "type": "string", "example": "a1b2c3d4e5f6..." },
+                  "passcode": { "type": "string", "example": "1234" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Payment successful, returns new balance" },
+          "400": { "description": "Missing details, incorrect passcode, or verification failed" },
+          "404": { "description": "Transaction not found" }
+        }
+      }
+    },
+    "/api/wallet/transfer": {
+      "post": {
+        "summary": "Peer-to-Peer Transfer",
+        "tags": ["Wallet"],
+        "description": "Transfers funds to another user. Uses row-level locking to prevent concurrent double-spending.",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["phone", "amount", "passcode"],
+                "properties": {
+                  "phone": { "type": "string", "example": "9876543210" },
+                  "amount": { "type": "number", "example": 500 },
+                  "passcode": { "type": "string", "example": "1234" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Money sent successfully" },
+          "400": { "description": "Invalid payload, incorrect passcode, or insufficient balance" },
+          "404": { "description": "Recipient not found" }
+        }
+      }
+    },
+    "/api/users/lookup": {
+      "get": {
+        "summary": "Lookup User by Phone",
+        "tags": ["Users"],
+        "description": "Finds a user's ID and Name via their phone number for P2P transfers.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "phone",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "The phone number of the user to lookup"
+          }
+        ],
+        "responses": {
+          "200": { "description": "User found" },
+          "400": { "description": "Phone number required or attempted self-transfer" },
+          "404": { "description": "No user found with this phone number" }
+        }
+      }
+    },
+    "/api/transactions/": {
+      "get": {
+        "summary": "Get My Transactions",
+        "tags": ["Transactions"],
+        "description": "Fetches all transactions where the user is either the sender or receiver.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "List of transactions retrieved successfully" },
+          "401": { "description": "Not authorized" },
+          "500": { "description": "Server error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
