@@ -69,7 +69,6 @@ Open a new terminal, go to the `frontend` folder, and start the React app:
 ```bash
 cd frontend
 npm install
-npm run dev
 ```
 Create a .env file in the frontend folder: 
 ```env
