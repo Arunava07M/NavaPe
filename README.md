@@ -90,6 +90,8 @@ I also set up a Swagger UI dashboard. It's basically a testing page for the back
 
 Once your backend server is running, go to: **`https://navape-backend.onrender.com/api-docs`**
 
+To test your Local API (if running locally): **`http://localhost:8000/api-docs`**
+
 **How to test secure routes like money transfers:**
 
 1. Open the `POST /api/auth/login` section and click **Try it out**.
