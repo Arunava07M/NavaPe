@@ -2,6 +2,9 @@
   <img src="./frontend/public/navape-logo.svg" alt="NavaPe Logo" width="80" />
   <h1>NavaPe</h1>
   <p><strong>A digital payment app built to test backend security and transactions.</strong></p>
+  <p>
+    <a href="https://navape.vercel.app"><strong>🚀 View Live Demo</strong></a>
+  </p>
 </div>
 
 ## Overview
