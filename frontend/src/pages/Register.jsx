@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext.jsx'
 
@@ -12,13 +12,19 @@ const Register = () => {
   const { register } = useContext(AuthContext)
   const navigate = useNavigate()
 
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [navigate])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
 
     try {
       await register(name, email, phone, password, passcode)
-      navigate('/dashboard')
+      navigate('/dashboard', { replace: true })
     } catch (err) {
       setError(err.response?.data?.message || 'registration failed')
     }
@@ -27,12 +33,10 @@ const Register = () => {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        
         <Link to="/" className="flex items-center gap-2 mb-1 cursor-pointer w-max">
           <img src="/navape-logo.svg" alt="logo" className="w-8 h-8" />
           <h1 className="text-2xl font-semibold text-gray-900">NavaPe</h1>
         </Link>
-
         <p className="text-sm text-gray-500 mb-6">Create a new account</p>
 
         {error && (

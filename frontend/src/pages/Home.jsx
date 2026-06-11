@@ -1,6 +1,15 @@
-import { Link } from 'react-router-dom'
+import { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Home = () => {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [navigate])
+
   return (
     <div className="relative h-screen bg-white font-sans flex flex-col overflow-hidden selection:bg-gray-900 selection:text-white">
       <div className="absolute inset-0 -z-10 h-full w-full bg-[linear-gradient(to_right,#8080800A_1px,transparent_1px),linear-gradient(to_bottom,#8080800A_1px,transparent_1px)] bg-[size:24px_24px]"></div>
@@ -22,7 +31,6 @@ const Home = () => {
           <img src="/navape-logo.svg" alt="logo" className="w-8 h-8" />
           <span className="text-xl font-semibold text-gray-900 tracking-tight">NavaPe</span>
         </Link>
-        
         <div className="flex items-center gap-6">
           <Link to="/login" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
             Login
